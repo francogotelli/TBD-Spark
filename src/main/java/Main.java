@@ -15,8 +15,8 @@ public class Main {
 
     public static void main(String[] args) {
         Sql2o sql2o[] = new Sql2o[2];
-        sql2o[0] = new Sql2o("jdbc:postgresql://127.0.0.1:5432/tbd","tbduser","tbdpass");
-        sql2o[1] = new Sql2o("jdbc:postgresql://127.0.0.1:5432/tbd2","tbduser","tbdpass");
+        sql2o[0] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","tbd");
+        sql2o[1] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","tbd");
 
         CtrEmpleado ctrEmpleado = new CtrEmpleado(sql2o);
         CtrReunion ctrReunion = new CtrReunion(sql2o);
