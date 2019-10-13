@@ -4,10 +4,7 @@ import com.google.gson.GsonBuilder;
 
 import com.google.gson.Gson;
 import controllers.*;
-import models.Empleado;
-import models.Participante;
-import models.Reunion;
-import models.Volunteer;
+import models.*;
 import org.sql2o.Sql2o;
 
 public class Main {
@@ -17,22 +14,53 @@ public class Main {
         sql2o[0] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
         sql2o[1] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
 
+        /* CONTROLLERS */
         CtrEmpleado ctrEmpleado = new CtrEmpleado(sql2o);
         CtrReunion ctrReunion = new CtrReunion(sql2o);
         CtrParticipantes ctrParticipantes = new CtrParticipantes(sql2o);
-        Controller<Long> ctrVolunteer = new Controller<>("volunteers", sql2o[0]);
+
+        VolunteerController volunteerController = new VolunteerController("volunteers", sql2o[0]);
+        EmergencyController emergencyController = new EmergencyController("emergencies", sql2o[0]);
+        TaskController taskController = new TaskController("tasks", sql2o[0]);
+        CharacteristicController characteristicController = new CharacteristicController("characteristics", sql2o[0]);
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
         get("/", (req, res) -> "{\"mensaje\":\"Corriendo\"}");
 
 
+        /* EMERGENCY ROUTES */
+        post("/emergencies/post", (req, res) -> {
+            Emergency emergency = gson.fromJson(req.body(), Emergency.class);
+            Emergency insertedEmergency = (Emergency) volunteerController.insertAllFields(emergency, Emergency.class);
+            res.status(201);
+            return gson.toJson(insertedEmergency);
+        });
 
+        get("emergencies", (req, res) -> {
+            return gson.toJson(emergencyController.getAll(Emergency.class));
+        });
+
+
+        /* VOLUNTEER ROUTES */
         post("/volunteers", (req, res) -> {
             Volunteer volunteer = gson.fromJson(req.body(), Volunteer.class);
-            Volunteer insertedVolunteer = (Volunteer)ctrVolunteer.insertAllFields(volunteer, Volunteer.class);
+            Volunteer insertedVolunteer = (Volunteer) volunteerController.insertAllFields(volunteer, Volunteer.class);
             res.status(201);
             return gson.toJson(insertedVolunteer);
+        });
+
+        /* TASK ROUTES */
+        post("tasks/post", (req, res) -> {
+           Task task = gson.fromJson(req.body(), Task.class);
+           Task insertedTask = (Task) taskController.insertAllFields(task, Task.class);
+           res.status(201);
+           return gson.toJson(insertedTask);
+        });
+
+        /* CHARACTERISTIC ROUTES */
+        get("characteristics", (req, res) -> {
+           return gson.toJson(characteristicController.getAll(Characteristic.class));
         });
 
         post("/empleados", (req, res) -> {

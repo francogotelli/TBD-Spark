@@ -7,9 +7,10 @@ import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class Controller<T> {
+public class Controller<T, K> {
     private String tableName;
     private Sql2o sql2o;
 
@@ -46,12 +47,13 @@ public class Controller<T> {
                 query.addParameter(field.getKey(), field.getValue());
         }
         System.out.println(query.toString());
-        return (T)query.executeUpdate().getKey();
+        T response = (T)query.executeUpdate().getKey();
+        conn.close();
+        return response;
     }
 
     public IModel insertAllFields(IModel model, Class<? extends Object> objClass) throws IllegalAccessException {
         Map<String, Object> fieldsAndValues = model.getFieldsAndValues(objClass);
-        System.out.println(fieldsAndValues.entrySet());
         model.setId(insert(fieldsAndValues));
         return model;
     }
@@ -68,5 +70,12 @@ public class Controller<T> {
         fieldsAndValues.keySet().removeIf(key -> !fields.contains(key));
         insert(fieldsAndValues);
         return model;
+    }
+
+    public List<K> getAll(Class<? extends Object> objClass){
+        Connection conn = sql2o.open();
+        String query = "select * from " + tableName;
+        System.out.println(query);
+        return (ArrayList<K>)conn.createQuery(query).executeAndFetch(objClass);
     }
 }
