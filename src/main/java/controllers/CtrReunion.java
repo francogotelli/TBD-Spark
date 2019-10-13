@@ -12,10 +12,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class CtrReunion {
-    private Sql2o sql2o[];
+    private Sql2o[] sql2o;
     public CtrReunion(Sql2o[] sql2o) {
         this.sql2o = sql2o;
     }
+
+
 
     public Reunion creaReunion(Reunion reu){
         int db = reu.getCod() % sql2o.length;

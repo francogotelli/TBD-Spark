@@ -3,30 +3,37 @@ import static spark.Spark.*;
 import com.google.gson.GsonBuilder;
 
 import com.google.gson.Gson;
-import controllers.CtrParticipantes;
-import controllers.CtrReunion;
-import controllers.CtrEmpleado;
+import controllers.*;
 import models.Empleado;
 import models.Participante;
 import models.Reunion;
+import models.Volunteer;
 import org.sql2o.Sql2o;
 
 public class Main {
 
     public static void main(String[] args) {
         Sql2o sql2o[] = new Sql2o[2];
-        sql2o[0] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","tbd");
-        sql2o[1] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","tbd");
+        sql2o[0] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
+        sql2o[1] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
 
         CtrEmpleado ctrEmpleado = new CtrEmpleado(sql2o);
         CtrReunion ctrReunion = new CtrReunion(sql2o);
         CtrParticipantes ctrParticipantes = new CtrParticipantes(sql2o);
+        Controller<Long> ctrVolunteer = new Controller<>("volunteers", sql2o[0]);
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
         get("/", (req, res) -> "{\"mensaje\":\"Corriendo\"}");
 
 
+
+        post("/volunteers", (req, res) -> {
+            Volunteer volunteer = gson.fromJson(req.body(), Volunteer.class);
+            Volunteer insertedVolunteer = (Volunteer)ctrVolunteer.insertAllFields(volunteer, Volunteer.class);
+            res.status(201);
+            return gson.toJson(insertedVolunteer);
+        });
 
         post("/empleados", (req, res) -> {
             Empleado emp = gson.fromJson(req.body(), Empleado.class);
