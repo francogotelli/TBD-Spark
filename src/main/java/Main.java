@@ -9,10 +9,40 @@ import org.sql2o.Sql2o;
 
 public class Main {
 
+    // Enables CORS on requests. This method is an initialization method and should be called once.
+    private static void enableCORS(final String origin, final String methods, final String headers) {
+
+        options("/*", (request, response) -> {
+
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+            }
+
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
+
+            return "OK";
+        });
+
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Request-Method", methods);
+            response.header("Access-Control-Allow-Headers", headers);
+            response.header("Access-Control-Expose-Headers", "Pagination-Count, Pagination-Limit, Pagination-Count, Pagination-Page");
+            // Note: this may or may not be necessary in your particular application
+            response.type("application/json");
+        });
+    }
+
+
     public static void main(String[] args) {
+        enableCORS("*","*", "*");
         Sql2o sql2o[] = new Sql2o[2];
-        sql2o[0] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
-        sql2o[1] = new Sql2o("jdbc:postgresql://157.245.136.132:5432/tbd","postgres","secret");
+        sql2o[0] = new Sql2o("jdbc:postgresql://localhost:5432/tbd","postgres","secret");
+        sql2o[1] = new Sql2o("jdbc:postgresql://localhost:5432/tbd2","postgres","secret");
 
         /* CONTROLLERS */
         CtrEmpleado ctrEmpleado = new CtrEmpleado(sql2o);
@@ -37,10 +67,13 @@ public class Main {
             return gson.toJson(insertedEmergency);
         });
 
-        get("emergencies", (req, res) -> {
+        get("/emergencies", (req, res) -> {
             return gson.toJson(emergencyController.getAll(Emergency.class));
         });
 
+        get("volunteers", (req, res) -> {
+            return gson.toJson(volunteerController.getAll(Volunteer.class));
+        });
 
         /* VOLUNTEER ROUTES */
         post("/volunteers", (req, res) -> {

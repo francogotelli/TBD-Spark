@@ -5,10 +5,13 @@ import java.util.Date;
 public class Emergency extends Model implements IModel<Long>{
     private Long id;
     private String description;
-    private Date last_updated_at = new Date();
+    private String last_updated_at;
     private String location;
-    private Date created_at = new Date();
+    private Date created_at;
     private Boolean status;
+    private float altitude;
+    private float latitude;
+    private float longitude;
     private String title;
     private String type;
     private Long user_id;
@@ -23,6 +26,15 @@ public class Emergency extends Model implements IModel<Long>{
         this.id = id;
     }
 
+
+    public float getLatitude() { return latitude; }
+
+    public float getLongitude() { return longitude; }
+
+    public void setLatitude(float latitude) { this.latitude = latitude; }
+
+    public void setLongitude(float longitude) {this.longitude = longitude; }
+
     public String getDescription() {
         return description;
     }
@@ -31,28 +43,12 @@ public class Emergency extends Model implements IModel<Long>{
         this.description = description;
     }
 
-    public Date getLast_updated_at() {
-        return last_updated_at;
-    }
-
-    public void setLast_updated_at(Date last_updated_at) {
-        this.last_updated_at = last_updated_at;
-    }
-
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
     }
 
     public Boolean getStatus() {

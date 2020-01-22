@@ -28,9 +28,9 @@ public class Volunteer extends Model implements IModel<Long>{
 
     private float longitude;
 
-    private Date created_at = new Date();
+    private String created_at;
 
-    private Date last_updated_at = new Date();
+    private String last_updated_at;
 
 
     public Volunteer() {
