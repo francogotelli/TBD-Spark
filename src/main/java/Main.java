@@ -62,9 +62,13 @@ public class Main {
         /* EMERGENCY ROUTES */
         post("/emergencies/post", (req, res) -> {
             Emergency emergency = gson.fromJson(req.body(), Emergency.class);
-            Emergency insertedEmergency = (Emergency) volunteerController.insertAllFields(emergency, Emergency.class);
+            Emergency insertedEmergency = (Emergency) emergencyController.insertAllFields(emergency, Emergency.class);
             res.status(201);
             return gson.toJson(insertedEmergency);
+        });
+
+        get("/emergencies", (req, res) -> {
+            return gson.toJson(emergencyController.getAll(Emergency.class));
         });
 
         get("/emergencies", (req, res) -> {

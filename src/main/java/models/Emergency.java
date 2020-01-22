@@ -7,9 +7,8 @@ public class Emergency extends Model implements IModel<Long>{
     private String description;
     private String last_updated_at;
     private String location;
-    private Date created_at;
+    private String created_at;
     private Boolean status;
-    private float altitude;
     private float latitude;
     private float longitude;
     private String title;
